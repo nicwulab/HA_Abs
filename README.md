@@ -29,15 +29,7 @@
       - [./result/Ab_info_CDRH3_clustering.tsv](./result/Ab_info_CDRH3_clustering.tsv)
       - [./result/CDRH3_cluster_summary.tsv](./result/CDRH3_cluster_summary.tsv)
 
-4. Analyzing the occurrence of YGD motif in CDR H3   
-``python3 script/script/analyze_YGD_motif.py``
-    - Input files:
-      - [./doc/HA_Abs_v14.10.xlsx](./doc/HA_Abs_v14.10.xlsx)
-      - [./doc/all_paired_antibodies_from_GB_v6.xlsx](./doc/all_paired_antibodies_from_GB_v6.xlsx)
-    - Ouput file:
-      - [./result/YGD_motif_freq.tsv](./result/YGD_motif_freq.tsv)
-
-5. Analyzing CDR H3 property   
+4. Analyzing CDR H3 property   
 ``python3 script/analyze_CDRH3_property.py``
     - Input files:
       - [./doc/HA_Abs_v14.10.xlsx](./doc/HA_Abs_v14.10.xlsx)
@@ -46,6 +38,22 @@
     - Ouput files:
       - [./result/CDRH3_property.tsv](./result/CDRH3_property.tsv)
       - [./result/Ab_for_model.tsv](./result/Ab_for_model.tsv)
+
+5. Create sequence logos for different CDR H3 clusters   
+``python3 script/CDRH3_seqlogo.py``
+    - Input file:
+      - [./result/Ab_info_CDRH3_clustering.tsv](./result/Ab_info_CDRH3_clustering.tsv)
+    - Output file:
+      - ./CDRH3_seqlogo/*.png
+
+6. Plot CDR H3 property for HA head and stem antibodies   
+``Rscript script/plot_CDRH3_property.R``
+    - Input file:
+      - [./result/CDRH3_property.tsv](./result/CDRH3_property.tsv)
+    - Output files:
+      - [./graph/CDRH3_length.png](./graph/CDRH3_length.png)
+      - [./graph/CDRH3_hydrophobicity.png](./graph/CDRH3_hydrophobicity.png)
+      - [./graph/tip_hydrophobicity.png](./graph/tip_hydrophobicity.png)
 
 ## Germline usage analysis
 1. Clonotype assignment   
@@ -69,3 +77,42 @@
       - [./result/IGV_pair_freq.tsv](./result/IGV_pair_freq.tsv)
       - [./result/HA_Abs_clonotype_public.xlsx](./result/HA_Abs_clonotype_public.xlsx)
       
+3. Extract IGHD4-17-encoded head antibodies 
+``python3 script/analyze_IGHD4-17.py``   
+    - Input file:
+      - [./doc/HA_Abs_v14.10.xlsx](./doc/HA_Abs_v14.10.xlsx)
+    - Output file:
+      - [./result/Abs_IGHD4-17.tsv](./result/Abs_IGHD4-17.tsv)
+
+4. Analyzing the occurrence of YGD motif in CDR H3   
+``python3 script/script/analyze_YGD_motif.py``
+    - Input files:
+      - [./doc/HA_Abs_v14.10.xlsx](./doc/HA_Abs_v14.10.xlsx)
+      - [./doc/all_paired_antibodies_from_GB_v6.xlsx](./doc/all_paired_antibodies_from_GB_v6.xlsx)
+    - Ouput file:
+      - [./result/YGD_motif_freq.tsv](./result/YGD_motif_freq.tsv)
+
+5. Plot VDJ gene usage   
+``Rscript script/plot_VDJgene_freq.R``
+    - Input files:
+      - [./result/IGHV_freq.tsv](./result/IGHV_freq.tsv)
+      - [./result/IGHD_freq.tsv](./result/IGHD_freq.tsv)
+      - [./result/IGLV_freq.tsv](./result/IGLV_freq.tsv)
+    - Output files:
+      - [./graph/IGHV_usage.png](./graph/IGHV_usage.png)
+      - [./graph/IGHD_usage.png](./graph/IGHD_usage.png)
+      - [./graph/IGLV_usage.png](./graph/IGLV_usage.png)
+
+6. Plot IGHV/IGK(L)V pairing frequency   
+``Rscript script/plot_Vpair_heatmap.R``
+    - Input files:
+      - [./result/IGV_pair_freq.tsv](./result/IGV_pair_freq.tsv)
+    - Output file:
+      - [./graph/Vpair_heatmap.png](./graph/Vpair_heatmap.png)
+
+7. Plot frequency of YGD motif   
+``Rscript script/plot_YGD_freq.R``
+    - Input file:
+      - [./result/YGD_motif_freq.tsv](./result/YGD_motif_freq.tsv)
+    - Output file:
+      - [./graph/YGD_motif_freq.png](./graph/YGD_motif_freq.png)
