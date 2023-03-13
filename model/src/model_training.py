@@ -37,7 +37,7 @@ def train_dl(CDR_model, train, val):
 
     CDR_history=CDR_model.fit(
         train_x, y_train,
-        epochs=128, batch_size=64,
+        epochs=128, batch_size=256,
         validation_data=(val_x, y_val),
         callbacks=callbacks,
         verbose=0
@@ -67,33 +67,12 @@ def train_dl_multi(CDR_model, train, val):
 
     CDR_history=CDR_model.fit(
         train_x, y_train,
-        epochs=128, batch_size=4,
+        epochs=128, batch_size=256,
         validation_data=(val_x, y_val),
         callbacks=callbacks,
         verbose=0
     )
     return CDR_model, CDR_history
-
-def recall_m(y_true, y_pred):
-    y_true = K.ones_like(y_true)
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-    all_positives = K.sum(K.round(K.clip(y_true, 0, 1)))
-
-    recall = true_positives / (all_positives + K.epsilon())
-    return recall
-
-def precision_m(y_true, y_pred):
-    y_true = K.ones_like(y_true)
-    true_positives = K.sum(K.round(K.clip(y_true * y_pred, 0, 1)))
-
-    predicted_positives = K.sum(K.round(K.clip(y_pred, 0, 1)))
-    precision = true_positives / (predicted_positives + K.epsilon())
-    return precision
-
-def f1_score(y_true, y_pred):
-    precision = precision_m(y_true, y_pred)
-    recall = recall_m(y_true, y_pred)
-    return 2*((precision*recall)/(precision+recall+K.epsilon()))
 
 def train_tree_multi(CDR_model, train, val):
 
@@ -102,9 +81,8 @@ def train_tree_multi(CDR_model, train, val):
     CDR_model.compile(
         metrics=[
             CategoricalAccuracy(name='accuracy'),
-            f1_score, 
-            precision_m, 
-            recall_m,
+            Precision(name='precision'),
+            Recall(name='recall'),
             AUC(name='auc'),
             AUC(name='prc', curve='PR'),  # precision-recall curve
             ])

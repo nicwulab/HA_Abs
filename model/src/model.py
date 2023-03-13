@@ -276,9 +276,6 @@ def build_t_encoder(
     # outputs = Dense(n_classes, activation="softmax")(x)
     return t_encoder
 
-# from options import opt
-# multi_class = opt.multi_class
-
 def CDR_model_original6(max_length, mlp_units=[512,128,64],n_classes=1,rate=0.1, multi_class=False):
     shapes = [(m,) for m in max_length]
     input1=Input(shape=shapes[0])
@@ -304,23 +301,6 @@ def CDR_model_original6(max_length, mlp_units=[512,128,64],n_classes=1,rate=0.1,
     act = 'softmax' if multi_class else 'sigmoid'
     outputs = Dense(n_classes, activation=act)(x)
     return Model([input1,input2,input3,input4,input5,input6],outputs)
-
-def CDR_model_original3(mlp_units,n_classes,rate=0.1,max_length=30, multi_class=False):
-    input1=Input(shape=(30,))
-    input2=Input(shape=(30,))
-    input3=Input(shape=(30,))
-
-    encoder1=build_t_encoder(num_layers=4,d_model=256,num_heads=4,dff=512,input_vocab_size=22,maximum_position_encoding=max_length)(input1)
-    encoder2=build_t_encoder(num_layers=4,d_model=256,num_heads=4,dff=512,input_vocab_size=22,maximum_position_encoding=max_length)(input2)
-    encoder3=build_t_encoder(num_layers=4,d_model=256,num_heads=4,dff=512,input_vocab_size=22,maximum_position_encoding=max_length)(input3)
-
-    x = Concatenate()([encoder1, encoder2,encoder3])
-    for dim in mlp_units:
-        x = Dense(dim, activation="relu")(x)
-        x = Dropout(rate)(x)
-    act = 'softmax' if multi_class else 'sigmoid'
-    outputs = Dense(n_classes, activation=act)(x)
-    return Model([input1,input2,input3],outputs)
 
 def CDR_model_single(mlp_units=[512,128,64],n_classes=1,rate=0.1,max_length=30):
     shape = (max_length,)
