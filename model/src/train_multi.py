@@ -9,13 +9,14 @@ from tensorflow.keras.utils import to_categorical
 from tensorflow.keras import backend as K
 from model_training import *
 
-work_dir = '/home/yhyeung2/CoV_Encoder_HA/src/'
 seq = ['VH_AA','VL_AA']
 cdr_char = 'XEDRKHQNSTPGCAVILMFYW-'
 test_size = 0.1
 
-data_dir = work_dir + 'data/experiment3/' # 'log/experiment4/'
-log_dir = work_dir + 'log/experiment3/' # 'log/experiment4/'
+work_dir = ''
+data_dir = work_dir + 'data/experiment3/' # + 'data/experiment4/'
+log_dir = work_dir + 'log/experiment3/' # + 'log/experiment4/'
+
 
 def train(X_df, y_df, random_seed, ratio):
 
@@ -30,7 +31,6 @@ def train(X_df, y_df, random_seed, ratio):
     val_set, test_set = (val_x, y_val), (test_x, y_test)
     
     y_train, y_val, y_test = to_categorical(y_train), to_categorical(y_val), to_categorical(y_test)
-    (test_x, y_test) = test_set
     input_length = train_set[0].shape[1]
     
     [train_set_tf, val_set_tf, test_set_tf] = [to_tf_dataset(x.copy(), y.copy(), convert_dict=codes_dict) for (x,y) in [train_set, val_set, test_set]]
@@ -39,6 +39,7 @@ def train(X_df, y_df, random_seed, ratio):
 
     # transformer model
 
+    K.clear_session()
     CDR_model = CDR_model_single(max_length=input_length, n_classes=3)
     CDR_model, CDR_history = train_dl_multi(CDR_model, (train_x, y_train), (val_x, y_val))
 
@@ -86,20 +87,19 @@ def train(X_df, y_df, random_seed, ratio):
 
     K.clear_session()
     CDR_model = tfdf.keras.RandomForestModel(task=tfdf.keras.Task.CLASSIFICATION)
-    CDR_model, CDR_history = train_tree_multi(CDR_model, train_set, val_set)
+    CDR_model, CDR_history = train_tree_multi(CDR_model, train_set_tf, val_set_tf)
 
-    model_score = CDR_model.evaluate(test_x, y_test, verbose=0)
+    model_score = CDR_model.evaluate(test_x_tf, y_test_tf, verbose=0)
 
     msg = {'time': datetime.now().strftime('%m/%d/%Y %H:%M:%S'),
            'total_params': int(CDR_model.count_params()),
            'ratio': float(ratio),
             'loss': float(model_score[0]),
             'accuracy': float(model_score[1]),
-            'f1score': float(model_score[2]),
-            'precision': float(model_score[3]),
-            'recall': float(model_score[4]),
-            'auc': float(model_score[5]),
-            'prc': float(model_score[6]),
+            'precision': float(model_score[2]),
+            'recall': float(model_score[3]),
+            'auc': float(model_score[4]),
+            'prc': float(model_score[5]),
             'seed': int(random_seed),
            }
 
@@ -112,9 +112,10 @@ def main():
     y_df = pd.read_csv(f'{data_dir}HA-ANARCI_y.csv')['binding']
 
     false_cnt = (y_df == 'others').sum()
-    true_false_ratio = false_cnt // (y_df.shape[0] - false_cnt)
+    true_false_ratio = false_cnt // ((y_df.shape[0] - false_cnt) // 2)
 
     for m in ['single', 'dense', 'tree']:
+        
         logger_path = log_dir+f'{m}.log'
         if not os.path.exists(os.path.dirname(logger_path)):
             os.makedirs(os.path.dirname(logger_path))
@@ -122,8 +123,9 @@ def main():
             logger.write('\n'*3+'*'*10 + 'START:' + datetime.now().strftime('%m/%d/%Y %H:%M:%S')+'*'*10+'\n')
 
     for random_seed in range(6):
-        for ratio in range(1, true_false_ratio+1, true_false_ratio//14):
-            X_df_, y_df_ = subsample_stemhead(X_df.copy(), y_df.copy(), random_seed, ratio)
+        for ratio in range(1, true_false_ratio+1):
+
+            X_df_, y_df_ = subsample_stemhead(X_df.copy(), y_df.copy(), random_seed, ratio) # display(x, y, y.value_counts())
             train(X_df_, y_df_, random_seed, ratio)
 
 if __name__ == '__main__':

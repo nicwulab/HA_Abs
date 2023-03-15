@@ -65,12 +65,9 @@ def process(All, HAhead, HAstem):
     neg = neg.loc[~neg_mask]
 
     X_df = concat_tables([pos_stem, pos_head, neg], ['stem', 'head', 'others'])
-
-    X_df = read_df(X_df, ['VH_AA','VL_AA'])
-    y_df = X_df[['Name','binding']]
-    X_df = X_df.drop('binding',axis=1)
+    X_df = read_df(X_df, ['VH_AA','VL_AA']).rename(columns={'Name': 'Id'})
     
-    return X_df, y_df
+    return X_df, X_df[['Id','binding']]
 
 # ANARCI sequence alignment
 
@@ -122,10 +119,10 @@ def decouple_haothers(neg_excel, pos_excel):
     negatives = negatives.loc[~negative_mask] # all other -ve cases; removed rows duplicated in HA / +ve
 
     X_df = pd.concat([negatives, positives])
-    X_df = X_df[HEADER]
+    X_df = X_df[HEADER].rename(columns={'Name': 'Id'})
 
     binding = pd.concat([pd.Series(False, index=negatives.index), pd.Series(True, index=positives.index)])
-    y_df = pd.DataFrame({'Name': X_df['Name'], 'binding': binding})
+    y_df = pd.DataFrame({'Id': X_df['Id'], 'binding': binding})
     
     X_df = X_df.reset_index(drop=True)
     y_df = y_df.reset_index(drop=True)
@@ -250,8 +247,6 @@ def encode(X_df, y_df, cdr_char, test_size, pad=30, equal_valtest=False, le=True
     
     return [(train_x, y_train), (val_x, y_eval), (test_x, y_test)], [X_train_id, X_eval_id, X_test_id]
 
-
-
 def merge_cdr(cdr_list):
     df = pd.DataFrame(cdr_list[0])
     for cdr in cdr_list[1:]:
@@ -266,7 +261,7 @@ def to_tf_dataset(x, y, y_label='binding',convert_dict=None):
     y = pd.Series(y).reset_index(drop=True)
     return x, y
 
-def sample_equal_ratio(x, y, le):
+def sample_equal_ratio(x, y, le, single=True):
     false_mask = (le.inverse_transform(y)) == 'others'
     flase_mask_id = false_mask.nonzero()[0]
     true_cnt = (y.shape[0] - flase_mask_id.shape[0])//2
@@ -278,4 +273,8 @@ def sample_equal_ratio(x, y, le):
 
     equal_ratio = ~false_mask
     equal_ratio[negative_samples] = True
-    return x[equal_ratio], y[equal_ratio]
+
+    if single:
+        return x[equal_ratio], y[equal_ratio]
+    else:
+        return [i[equal_ratio] for i in x], y[equal_ratio]

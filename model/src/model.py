@@ -4,8 +4,6 @@ import numpy as np
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Concatenate, Embedding, Dense, Dropout, Input, Layer, LayerNormalization, GlobalAveragePooling1D
 from tensorflow.keras import Model
-# from tensorflow.keras.utils import to_categorical
-# from tensorflow.keras import layers
 
 def get_angles(pos, i, d_model):
     angle_rates = 1 / np.power(10000, (2 * (i//2)) / np.float32(d_model))

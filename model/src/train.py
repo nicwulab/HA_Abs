@@ -9,7 +9,7 @@ from tensorflow.keras import backend as K
 from model_training import *
 
 
-work_dir = '/home/yhyeung2/CoV_Encoder_HA/src/'
+work_dir = ''
 data_dir = work_dir + 'data/experiment2/'
 cdr_char = 'XEDRKHQNSTPGCAVILMFYW-'
 test_size = 0.1
@@ -96,9 +96,9 @@ def train(X_df, y_df, random_seed, ratio):
 
     K.clear_session()
     CDR_model = tfdf.keras.RandomForestModel(task=tfdf.keras.Task.CLASSIFICATION)
-    CDR_model, CDR_history = train_tree(CDR_model, train_set, val_set)
+    CDR_model, CDR_history = train_tree(CDR_model, train_set_tf, val_set_tf)
 
-    model_score = CDR_model.evaluate(test_x, y_test, verbose=0)
+    model_score = CDR_model.evaluate(test_x_tf, y_test_tf, verbose=0)
 
     msg = {'time': datetime.now().strftime('%m/%d/%Y %H:%M:%S'),
            'total_params': int(CDR_model.count_params()),
