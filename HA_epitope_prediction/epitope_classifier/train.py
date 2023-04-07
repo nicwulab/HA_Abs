@@ -28,8 +28,8 @@ def train_Epitope_Clsfr(model_name,batch_size,classes,lm_model_name,lr,dataset_p
     trainer = pl.Trainer(default_root_dir=root_dir,
                          logger=logger,
                          max_epochs=11,
-                         strategy='ddp_find_unused_parameters_true',
-                         callbacks=[ModelCheckpoint(dirpath=root_dir, save_weights_only=True),
+                         devices=[0,1],
+                         callbacks=[ModelCheckpoint(dirpath=root_dir,monitor='val_F1',mode="max", save_weights_only=True),
                                     EarlyStopping(monitor="val_loss", mode="min", patience=5)])
 
     model = Epitope_Clsfr(classes=classes,class_weights=class_weights,lr=lr,lm_model_name = lm_model_name,hidden_dim=hidden_dim,layers=layers)
@@ -48,17 +48,17 @@ def train_Epitope_Clsfr(model_name,batch_size,classes,lm_model_name,lr,dataset_p
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--batch_size", default=32, type=int)
-    parser.add_argument("-lr", "--learning_rate", default=1e-4, type=float)
-    parser.add_argument("-c", "--classes", default=7, type=int)
+    parser.add_argument("-lr", "--learning_rate", default=1e-5, type=float)
+    parser.add_argument("-c", "--classes", default=3, type=int)
     parser.add_argument("-l", "--layers", default=3, type=int)
     parser.add_argument("-hd", "--hidden_dim", default=1280, type=int)
     parser.add_argument("-lm", "--language_model", default='esm2_t33_650M_UR50D', type=str)
-    parser.add_argument("-dp", "--dataset_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/result/', type=str)
-    parser.add_argument("-ckp", "--checkpoint_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/checkpoint/', type=str)
+    parser.add_argument("-dp", "--dataset_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/result/', type=str)
+    parser.add_argument("-ckp", "--checkpoint_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/checkpoint/', type=str)
     parser.add_argument("-n", "--name", default='esm_baseline_new', type=str)
     args = parser.parse_args()
 
-    logger = WandbLogger(name=args.name, project='Epitope_clsfr')
+    logger = WandbLogger(name=args.name, project='HA_clsfr')
     model, result = train_Epitope_Clsfr(model_name=args.name,
                                    classes=args.classes,
                                    lr=args.learning_rate,

@@ -18,20 +18,20 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-b", "--batch_size", default=32, type=int)
     parser.add_argument("-lr", "--learning_rate", default=1e-4, type=float)
-    parser.add_argument("-c", "--classes", default=7, type=int)
+    parser.add_argument("-c", "--classes", default=3, type=int)
     parser.add_argument("-lm", "--language_model", default='esm2_t33_650M_UR50D', type=str)
     parser.add_argument("-l", "--layers", default=3, type=int)
     parser.add_argument("-hd", "--hidden_dim", default=1280, type=int)
-    parser.add_argument("-dp", "--dataset_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/result/', type=str)
-    parser.add_argument("-ckp", "--checkpoint_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/checkpoint/', type=str) 
+    parser.add_argument("-dp", "--dataset_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/result/', type=str)
+    parser.add_argument("-ckp", "--checkpoint_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/checkpoint/', type=str) 
     parser.add_argument("-ckn","--checkpoint_name", default='epoch=205-step=73954.ckpt', type=str)
     parser.add_argument("-n", "--name", default='esm_baseline_new', type=str)
-    parser.add_argument("-o", "--output_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/result/', type=str)
+    parser.add_argument("-o", "--output_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/result/', type=str)
     args = parser.parse_args()
 
 
     train_loader, val_loader, test_loader = get_dataset(args.dataset_path, batch_size=args.batch_size)
-    trainer = pl.Trainer()
+    trainer = pl.Trainer(devices=[0,1])
     # Check whether pretrained model exists. If yes, load it and skip training
     pretrained_filename = os.path.join(args.checkpoint_path+args.name+'/', args.checkpoint_name)
     if os.path.isfile(pretrained_filename):
@@ -49,7 +49,7 @@ if __name__ == '__main__':
         predicted_labels_ls = []
         predicted_probabilities = []
 
-        classes = ["HA:Head", "HA:Stem","HIV", "S:NTD", "S:RBD", "S:S2", "Others"]
+        classes = ["HA:Head", "HA:Stem", "Others"]
         # loop over the test data and predict the labels
         with torch.no_grad():
             for batch in test_loader:

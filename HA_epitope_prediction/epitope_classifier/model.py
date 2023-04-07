@@ -8,7 +8,7 @@ import pytorch_lightning as pl
 
 class Epitope_Clsfr(pl.LightningModule):
     """ Class containig the LM models for predicting anitbody epitope. """
-    def __init__(self, classes,class_weights=None,seq_dim=26,hidden_dim=1280,lr=0.0001, drop=0.3, lm_model_name='esm2_t33_650M_UR50D',layers=2):
+    def __init__(self, classes,class_weights=None,seq_dim=26,hidden_dim=1280,lr=0.0001, drop=0.1, lm_model_name='esm2_t33_650M_UR50D',layers=2):
         super().__init__()
         """ Initialize the model
         :param classes: {int} number of epitopes
@@ -39,11 +39,11 @@ class Epitope_Clsfr(pl.LightningModule):
         elif lm_model_name == 'onehot':
             self.seq_dim = 26
             seq_dim = 26
-        self.accuracy = Accuracy(task='multiclass',num_classes=7)
-        self.AveragePrecision = AveragePrecision(task='multiclass',num_classes=7)
-        self.AUCROC = AUROC(task='multiclass',num_classes=7)
-        self.PrecisionRecallCurve = PrecisionRecallCurve(task='multiclass',num_classes=7)
-        self.F1Score=F1Score(task='multiclass',num_classes=7)
+        self.accuracy = Accuracy(task='multiclass',num_classes=classes)
+        self.AveragePrecision = AveragePrecision(task='multiclass',num_classes=classes)
+        self.AUCROC = AUROC(task='multiclass',num_classes=classes)
+        self.PrecisionRecallCurve = PrecisionRecallCurve(task='multiclass',num_classes=classes)
+        self.F1Score=F1Score(task='multiclass',num_classes=classes)
         # define classifier layers
         self.avgpool = nn.AdaptiveAvgPool2d((1,hidden_dim))
         self.fc = nn.Linear(hidden_dim, hidden_dim)
@@ -61,9 +61,7 @@ class Epitope_Clsfr(pl.LightningModule):
             x = self.fc(x)
             x = F.relu(x)
             x = F.dropout(x, p=self.drop, training=self.training)
-
         y = self.fc2(x)
-
         return y
 
     def configure_optimizers(self):
