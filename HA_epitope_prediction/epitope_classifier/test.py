@@ -22,11 +22,11 @@ if __name__ == '__main__':
     parser.add_argument("-lm", "--language_model", default='esm2_t33_650M_UR50D', type=str)
     parser.add_argument("-l", "--layers", default=3, type=int)
     parser.add_argument("-hd", "--hidden_dim", default=1280, type=int)
-    parser.add_argument("-dp", "--dataset_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/result/', type=str)
-    parser.add_argument("-ckp", "--checkpoint_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/checkpoint/', type=str) 
+    parser.add_argument("-dp", "--dataset_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope_prediction/result/', type=str)
+    parser.add_argument("-ckp", "--checkpoint_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope_prediction/checkpoint/', type=str) 
     parser.add_argument("-ckn","--checkpoint_name", default='epoch=205-step=73954.ckpt', type=str)
     parser.add_argument("-n", "--name", default='esm_baseline_new', type=str)
-    parser.add_argument("-o", "--output_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope/result/', type=str)
+    parser.add_argument("-o", "--output_path", default='/home/yiquan2/ESM_Ab/HA_Abs/HA_epitope_prediction/result/', type=str)
     args = parser.parse_args()
 
 
