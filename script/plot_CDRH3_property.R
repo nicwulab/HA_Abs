@@ -44,7 +44,7 @@ plot_CDRH3_property <- function(data_table, graphname, ylab){
           guides(colour = guide_legend(override.aes = list(size=0.5))) +
           xlab("") +
           ylab(ylab)
-  ggsave(graphname, p, width=1, height=2, dpi=600)
+  ggsave(graphname, p, width=1, height=1.5, dpi=600)
   }
 
 df <- read_tsv('result/CDRH3_property.tsv') %>%
@@ -56,17 +56,5 @@ plot_CDRH3_property(df_select, 'graph/CDRH3_length.png', 'CDR H3 length')
 df_select <- mutate(df, parameter=CDRH3_H_score)
 plot_CDRH3_property(df_select, 'graph/CDRH3_hydrophobicity.png', 'CDR H3 hydrophobic score')
 
-#df_select <- mutate(df, parameter=tip_C_score)
-#plot_CDRH3_property(df_select, 'graph/CDRH3_charge.png', 'CDR H3 charge score')
-
-#df_select <- mutate(df, parameter=tip_A_score)
-#plot_CDRH3_property(df_select, 'graph/CDRH3_aromatic.png', 'CDR H3 aromatic score')
-
 df_select <- mutate(df, parameter=tip_H_score)
 plot_CDRH3_property(df_select, 'graph/tip_hydrophobicity.png', 'CDR H3 tip hydrophobic score')
-
-#df_select <- mutate(df, parameter=tip_C_score)
-#plot_CDRH3_property(df_select, 'graph/tip_charge.png', 'CDR H3 tip charge score')
-
-#df_select <- mutate(df, parameter=tip_A_score)
-#plot_CDRH3_property(df_select, 'graph/tip_aromatic.png', 'CDR H3 tip aromatic score')

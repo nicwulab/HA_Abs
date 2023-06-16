@@ -161,7 +161,7 @@ def main():
   out_IGLV_file  = 'result/IGLV_freq.tsv'
   out_Vpair_file = 'result/IGV_pair_freq.tsv'
   out_pub_clono  = 'result/HA_Abs_clonotype_public.xlsx'
-  file_ab        = 'doc/HA_Abs_v14.10.xlsx'
+  file_ab        = 'doc/HA_Abs_v17.xlsx'
   file_clonotype = 'result/HA_Abs_clonotype.xlsx'
   file_GB        = 'doc/all_paired_antibodies_from_GB_v6.xlsx'
   Ab_dict        = read_ab_info(file_ab)
