@@ -42,7 +42,7 @@ def prepare_dataset(train_data,val_data,lm_data_dir):
         train_df = pd.read_csv(train_data)
         val_df = pd.read_csv(val_data)
     else:
-        print('ERROR: unfined data format')
+        print('ERROR: undefined data format')
         
     train_sequences = train_df['sequence_alignment_aa_heavy'].apply(lambda x: ' '.join(list(x))) + ' <null_1> ' + train_df['sequence_alignment_aa_light'].apply(lambda x: ' '.join(list(x)))
     

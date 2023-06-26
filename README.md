@@ -12,7 +12,7 @@
 
 ### if you set up env using conda, run conda installation as follow:
 ```commandline
-conda env create -f environment.yml
+conda env create -f Ab_epitope/environment.yml
 ```
 
 ## Dataset
@@ -136,4 +136,4 @@ conda env create -f environment.yml
       - [./graph/YGD_motif_freq.png](./graph/YGD_motif_freq.png)
 
 ## mBLM for epitope prediction
-See more detail on [Ab_epitope](./Ab_epitope)
+See more details on [Ab_epitope](./Ab_epitope)
