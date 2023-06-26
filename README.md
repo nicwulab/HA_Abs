@@ -1,8 +1,26 @@
 # Sequence analysis of influenza hemagglutinin (HA) antibodies
 
-## Input files
-* [./doc/HA_Abs_v17.xlsx](./doc/HA_Abs_v17.xlsx): List of HA antibodies collected from publications and patents
-* [./doc/all_paired_antibodies_from_GB_v6.xlsx](./doc/all_paired_antibodies_from_GB_v6.xlsx): List of HA antibodies collected from [GenBank](https://www.ncbi.nlm.nih.gov/genbank/)
+## Contents
+
+* [Env setup](#Env-setup)  
+* [Dataset](#dataset) 
+* [CDR H3 analysis](#cdr-h3-analysis)   
+* [mBLM for epitope prediction](#mblm-for-epitope-prediction) 
+ 
+
+## Env setup
+
+### if you set up env using conda, run conda installation as follow:
+```commandline
+conda env create -f environment.yml
+```
+
+## Dataset
+
+* Flu antibody dataset in this paper: [./doc/HA_Abs_v17.xlsx](./doc/HA_Abs_v17.xlsx)
+* SARS-CoV-2 antibody and HIV dataset is from our previous paper: [A large-scale systematic survey reveals recurring molecular features of public antibody responses to SARS-CoV-2](https://www.sciencedirect.com/science/article/pii/S107476132200142X)
+* All antibody from NCBI[./doc/all_paired_antibodies_from_GB_v6.xlsx](./doc/all_paired_antibodies_from_GB_v6.xlsx): List of HA antibodies collected from [GenBank](https://www.ncbi.nlm.nih.gov/genbank/)
+* OSA human paired memory B cell sequences: [OAS](https://opig.stats.ox.ac.uk/webapps/oas/oas_paired/)
 
 ## CDR H3 analysis
 1. Extract CDR H3 sequences and references   
@@ -116,3 +134,6 @@
       - [./result/YGD_motif_freq.tsv](./result/YGD_motif_freq.tsv)
     - Output file:
       - [./graph/YGD_motif_freq.png](./graph/YGD_motif_freq.png)
+
+## mBLM for epitope prediction
+See more detail on [Ab_epitope](./Ab_epitope)
