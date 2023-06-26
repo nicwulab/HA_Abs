@@ -147,7 +147,7 @@ def write_cluster_info(outfile1, outfile2, header, Ab_dict, cluster_dict):
 def main():
   outfile1  = 'result/Ab_info_CDRH3_clustering.tsv'
   outfile2  = 'result/CDRH3_cluster_summary.tsv'
-  filename = 'doc/HA_Abs_v14.10.xlsx'
+  filename = 'doc/HA_Abs_v17.xlsx'
   file_cluster  = 'result/CDRH3_cluster.tsv'
   Ab_dict, header  = reading_Ab_table(filename)
   cluster_dict  = reading_cluster_info(file_cluster)

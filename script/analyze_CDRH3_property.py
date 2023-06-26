@@ -181,7 +181,7 @@ def write_CDRs(CDRH1_dict, CDRH2_dict, CDRH3_dict, CDRL1_dict, CDRL2_dict, CDRL3
   outfile.close()
 
 def main():
-  filename       = 'doc/HA_Abs_v14.10.xlsx'
+  filename       = 'doc/HA_Abs_v17.xlsx'
   outfile1       = 'result/CDRH3_property.tsv'
   outfile2       = 'result/Ab_for_model.tsv'
   file_clonotype = 'result/HA_Abs_clonotype.xlsx'

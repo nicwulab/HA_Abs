@@ -64,7 +64,7 @@ def write_clonotype(clonotype_assign, filename, outfile_clonotype):
   df.to_excel(outfile_clonotype, index=False)
 
 def main():
-  filename           = 'doc/HA_Abs_v14.10.xlsx'
+  filename           = 'doc/HA_Abs_v17.xlsx'
   CDRH3_cluster      = 'result/CDRH3_cluster.tsv'
   outfile_clonotype  = 'result/HA_Abs_clonotype.xlsx'
   CDRH3_cluster_dict = read_cluster_info(CDRH3_cluster)
