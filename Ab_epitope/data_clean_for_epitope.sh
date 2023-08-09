@@ -22,3 +22,5 @@ python ./script/add_clstr2df.py
 
 # split dataset
 python ./script/split_dataset.py 
+# remove repeat fasta sequence
+pytho script/rm_fas_repeats.py result/epitope_clean.fasta result/epitope_clean_v2.fasta 

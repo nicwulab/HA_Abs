@@ -13,7 +13,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Read the Excel file into a Pandas DataFrame
-    df = pd.read_csv(args.input_file)
+    df = pd.read_csv(args.input_file, low_memory=False)
 
     # Open the output file for writing
     with open(args.output_file, 'w') as f:

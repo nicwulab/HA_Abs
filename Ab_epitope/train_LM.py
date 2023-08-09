@@ -105,7 +105,7 @@ def train_mBLM(tokenizer,train_dir,val_dir,epoch,per_gpu_train_batch_size,output
         train_dataset = train_dataset,
         eval_dataset = val_dataset
     )
-
+    print('Start training ..')
     trainer.train()
     eval_results = trainer.evaluate()
     print(f"Evaluation perplexity: {math.exp(eval_results['eval_loss']):.2f}")
@@ -146,17 +146,17 @@ if __name__ == "__main__":
         help="the number of hidden layer ",)
     parser.add_argument(
         "--epoch",
-        default=20,
+        default=10,
         type=int,
         help="the number of training epoch ",)
     parser.add_argument(
         "--train_data",
-        default='./data/dataset/OAS_memory_val.tsv',
+        default='./data/dataset/memory_paired_Abs_train.tsv',
         type=str,
         help="train dataset",)
     parser.add_argument(
         "--val_data",
-        default='./data/dataset/OAS_memory_val.tsv',
+        default='./data/dataset/memory_paired_Abs_val.tsv',
         type=str,
         help="validation dataset",)
     parser.add_argument(

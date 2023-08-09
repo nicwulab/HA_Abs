@@ -9,6 +9,8 @@ from utils import get_dataset
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, multilabel_confusion_matrix
+from tqdm import tqdm
+
 # Usage
 '''
 python test.py
@@ -20,11 +22,11 @@ if __name__ == '__main__':
     parser.add_argument("-lr", "--learning_rate", default=2e-5, type=float)
     parser.add_argument("-c", "--classes", default=7, type=int)
     parser.add_argument("-lm", "--language_model", default='mBLM', type=str)
-    parser.add_argument("-l", "--layers", default=3, type=int)
+    parser.add_argument("-l", "--layers", default=1, type=int)
     parser.add_argument("-hd", "--hidden_dim", default=768, type=int)
     parser.add_argument("-dp", "--dataset_path", default='result/', type=str)
     parser.add_argument("-ckp", "--checkpoint_path", default='checkpoint/', type=str) 
-    parser.add_argument("-ckn","--checkpoint_name", default='epoch=19-step=7160.ckpt', type=str)
+    parser.add_argument("-ckn","--checkpoint_name", default='mBLM.ckpt', type=str)
     parser.add_argument("-n", "--name", default='mBLM_attention', type=str)
     parser.add_argument("-o", "--output_path", default='result/', type=str)
     args = parser.parse_args()
@@ -60,7 +62,7 @@ if __name__ == '__main__':
         classes = ["HA:Head", "HA:Stem","HIV", "S:NTD", "S:RBD", "S:S2", "Others"]
         # loop over the test data and predict the labels
         with torch.no_grad():
-            for batch in test_loader:
+            for batch in tqdm(test_loader,desc="mBLM on test set", leave=False):
                 # get the inputs and labels
                 inputs, labels = batch
                 outputs = model(inputs)

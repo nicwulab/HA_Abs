@@ -58,19 +58,21 @@ we then fine-tuned mBLM for multi-epitopes prediction.
 ### extract mBLM embedding features
 
 ```commandline
-python extract_mBLM_feature.py
+python extract_mBLM_feature.py --model_location mBLM --fasta_file result/epitope_info_clstr_v2.fasta --output_dir result/mBLM_embedding
 ```
 ### benchmarking
 ```commandline
-python ./Epitope_Clsfr/train.py -n onehot_baseline -lm onehot -hd 1280
+python ./Epitope_Clsfr/train.py -n onehot_baseline -lm onehot -hd 26
 python ./Epitope_Clsfr/train.py -n esm2_attention -lm esm2_t33_650M_UR50D -hd 1280
 python ./Epitope_Clsfr/train.py -n mBLM_attention -lm mBLM -hd 768
 ```
 ### model test and predict
 ```commandline
-python ./Epitope_Clsfr/test.py -n mBLM_attention -lm mBLM -hd 768 -ckn epoch=19-step=7160.ckpt
+python ./Epitope_Clsfr/test.py -n mBLM_attention -lm mBLM -hd 768 -ckn mBLM.ckpt
 
-python ./Epitope_Clsfr/predict.py -dp /home/yiquan2/ESM_Ab/Ab_epitope/result/Flu_unknown.csv -n mBLM_attention -lm mBLM -hd 768 -ckn epoch=19-step=7160.ckpt
+python ./Epitope_Clsfr/predict.py -dp result/Flu_unknown.csv -n mBLM_attention -lm mBLM -hd 768 -ckn mBLM.ckpt
+
+python ./Epitope_Clsfr/predict.py -dp result/Sarah_stem_antibodies.xlsx -n mBLM_attention -lm mBLM -hd 768 -ckn mBLM.ckpt
 ```
 
 ## Antibody binding sites identification
@@ -78,9 +80,14 @@ In order to investigate how model make a accurate prediction, Grad-CAM [https://
 
 ### Grad-CAM
 ```commandline
-python ./Epitope_Clsfr/explain.py -n mBLM_attention -lm mBLM -hd 768 -ckn epoch=19-step=7160.ckpt
+python ./Epitope_Clsfr/explain.py -n mBLM_attention -lm mBLM -hd 768 -ckn mBLM.ckpt
 
-python ./Epitope_Clsfr/explain.py -dfp /home/yiquan2/ESM_Ab/Ab_epitope/result/Flu_unknown.csv -n esm2_attention -lm esm2_t33_650M_UR50D -hd 1280 -ckn epoch=10-step=3949-v1.ckpt -o /home/yiquan2/ESM_Ab/Ab_epitope/result/Flu_unknown_explain/ --provide_dataset
+python ./Epitope_Clsfr/explain.py -dfp result/Flu_unknown.csv -n mBLM_attention -lm mBLM -hd 768 -ckn mBLM.ckpt -o result/Flu_unknown_explain/ --provide_dataset
 ```
 
 ### Visualization
+python script/write_pdb_visualizer.py
+
+python script/pymol_viz.py
+
+python script/cluster_saliency_map.py

@@ -4,11 +4,12 @@ import numpy as np
 import pandas as pd
 import os
 import argparse
-from model2 import Epitope_Clsfr
+from model import Epitope_Clsfr
 from utils import get_dataset, get_dataset_from_df
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, multilabel_confusion_matrix
+from tqdm import tqdm
 # Usage
 '''
 python predict.py
@@ -18,14 +19,14 @@ if __name__ == '__main__':
     parser.add_argument("-b", "--batch_size", default=32, type=int) 
     parser.add_argument("-lr", "--learning_rate", default=1e-4, type=float)
     parser.add_argument("-c", "--classes", default=7, type=int)
-    parser.add_argument("-lm", "--language_model", default='esm2_t33_650M_UR50D', type=str)
-    parser.add_argument("-l", "--layers", default=3, type=int)
-    parser.add_argument("-hd", "--hidden_dim", default=1280, type=int)
-    parser.add_argument("-dp", "--dataframe_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/result/Flu_unknown.csv', type=str)
-    parser.add_argument("-ckp", "--checkpoint_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/checkpoint/', type=str)
-    parser.add_argument("-ckn","--checkpoint_name", default='epoch=205-step=73954.ckpt', type=str)
-    parser.add_argument("-n", "--name", default='esm_baseline_new', type=str)
-    parser.add_argument("-o", "--output_path", default='/home/yiquan2/ESM_Ab/Ab_epitope/result/', type=str)
+    parser.add_argument("-lm", "--language_model", default='mBLM', type=str)
+    parser.add_argument("-l", "--layers", default=1, type=int)
+    parser.add_argument("-hd", "--hidden_dim", default=768, type=int)
+    parser.add_argument("-dp", "--dataframe_path", default='result/Flu_unknown.csv', type=str)
+    parser.add_argument("-ckp", "--checkpoint_path", default='checkpoint/', type=str)
+    parser.add_argument("-ckn","--checkpoint_name", default='mBLM.ckpt', type=str)
+    parser.add_argument("-n", "--name", default='mBLM_attention', type=str)
+    parser.add_argument("-o", "--output_path", default='result/', type=str)
     args = parser.parse_args()
 
     test_loader = get_dataset_from_df(args.dataframe_path, batch_size=args.batch_size)
@@ -34,13 +35,13 @@ if __name__ == '__main__':
     if os.path.isfile(pretrained_filename):
         print("Found pretrained model, loading...")
         model = Epitope_Clsfr.load_from_checkpoint(pretrained_filename,classes=args.classes,hidden_dim=args.hidden_dim,layers=args.layers,class_weights=None,lm_model_name = args.language_model)
-        model.eval()
+        # model.eval()
         # test on test set
         predicted_labels_ls = []
         predicted_probabilities = []
 
         with torch.no_grad():
-            for batch in test_loader:
+            for batch in tqdm(test_loader,desc="mBLM prediction", leave=False):
                 # get the inputs and labels
                 inputs, _ = batch
 

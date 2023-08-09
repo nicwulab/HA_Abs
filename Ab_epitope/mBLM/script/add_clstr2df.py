@@ -53,7 +53,7 @@ def add_clstr2df(tmp,output_path,cluster):
 
     with open(f'{tmp}/cluster.tsv','w') as o:
         o.write('\t'.join(['Name',f'cluster_ID_by_{cluster}'])+'\n')
-        for record in SeqIO.parse(f"/home/yiquan2/ESM_Ab/Ab_pairedchain_predictor/results/cluster/OAS_memory_paired_clean{cluster}.clstr", "fasta"):
+        for record in SeqIO.parse(f"mBLM/result/cluster/memory_paired_Abs{cluster}.clstr", "fasta"):
             c_id = record.id
             s = record.seq
             # loop over all the sequences id in the same cluster, find the representative using '... *'
@@ -72,16 +72,16 @@ def add_clstr2df(tmp,output_path,cluster):
 if __name__ == "__main__":
     # Set up argparse
     parser = argparse.ArgumentParser(description='Add cluster to an Excel table')
-    parser.add_argument('-i','--input_file', default='results/OAS_memory_paired_v3.csv', type=str, help='the input csv file')
-    parser.add_argument('-o','--output_file',  default='results/OAS_memory_paired_v4.csv',type=str, help='the output csv file')
-    parser.add_argument('-l', '--list',  default=['0.5','0.6','0.7','0.8','0.9'], nargs='+', help='cluster identity list to add the xlsx table')
-    parser.add_argument('-tmp','--tmp_dir', default='results',type=str, help='the output cluster file temporary directory')
+    parser.add_argument('-i','--input_file', default='mBLM/result/memory_paired_Abs.csv', type=str, help='the input csv file')
+    parser.add_argument('-o','--output_file',  default='mBLM/result/memory_paired_Abs_final.csv',type=str, help='the output csv file')
+    parser.add_argument('-l', '--list',  default=['0.5','0.6','0.7','0.8','0.9','0.95'], nargs='+', help='cluster identity list to add the xlsx table')
+    parser.add_argument('-tmp','--tmp_dir', default='mBLM/result',type=str, help='the output cluster file temporary directory')
     
     # Parse the arguments
     args = parser.parse_args()
     shutil.copy(args.input_file, args.output_file)
     for c in args.list:
-        preprocess_clstr(f"/home/yiquan2/ESM_Ab/Ab_pairedchain_predictor/results/cluster/OAS_memory_paired_clean{c}.clstr")
+        preprocess_clstr(f"mBLM/result/cluster/memory_paired_Abs{c}.clstr")
         add_clstr2df(args.tmp_dir,args.output_file,c)
 
 

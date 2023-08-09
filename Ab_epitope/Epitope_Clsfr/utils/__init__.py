@@ -160,19 +160,19 @@ def get_dataset_from_df(df_path, batch_size, ncpu=16):
         
     filename = os.path.basename(df_path).split('.')[0]
     # first, the get the fasta file and remove the depulicates
-    fas_f = f'/home/yiquan2/ESM_Ab/Ab_epitope/result/{filename}.fasta'
+    fas_f = f'result/{filename}.fasta'
     if not os.path.exists(fas_f):
         print('start generating fasta file')
         df2fasta(df,fas_f)
         # remove duplicate sequence from fasta
-        subprocess.run(['python', '/home/yiquan2/ESM_Ab/Ab_epitope/rm_fas_repeats.py', fas_f, fas_f])
+        subprocess.run(['python', 'script/rm_fas_repeats.py', fas_f, fas_f])
     # run esm embedding
-    esm_output_path = f'/home/yiquan2/ESM_Ab/Ab_epitope/result/{filename}/'
-    os.makedirs(esm_output_path, exist_ok=True)
-    if len(os.listdir(esm_output_path)) < 1:
+    embedding_output_path = f'result/{filename}_mBLM_embedding/'
+    os.makedirs(embedding_output_path, exist_ok=True)
+    if len(os.listdir(embedding_output_path)) < 1:
         print('start embedding seqeuence...')
-        subprocess.run(['python', '/home/yiquan2/ESM_Ab/Ab_epitope/esm_extractor.py',  'esm2_t33_650M_UR50D',fas_f, f'{esm_output_path}', '--repr_layers', '33', '--include', 'per_tok','contacts'])
-    test_loader = DataLoader(EpitopeDataset(df,esm_output_path,prediction=True), batch_size=batch_size,shuffle=False,
+        subprocess.run(['python', 'extract_mBLM_feature.py',  '--model_location','mBLM','--fasta_file',fas_f,'--output_dir', embedding_output_path])
+    test_loader = DataLoader(EpitopeDataset(df,embedding_output_path,prediction=True), batch_size=batch_size,shuffle=False,
                                          num_workers=ncpu, pin_memory=True)
     return test_loader
 def get_dataset(path, batch_size,LM='esm2_t33_650M', ncpu=16):

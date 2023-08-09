@@ -3,6 +3,7 @@ import numpy as np
 from tqdm import tqdm
 import argparse
 from sklearn.model_selection import GroupShuffleSplit,train_test_split
+from sklearn.utils import shuffle
 '''
 firstly, we remove "unknown" group sequence that is similar to other annotated groups (sequence identity 0.9)
 #consider to do: adding 99% sequence identity from "Unknown" group as "Known"
@@ -69,6 +70,8 @@ def data_clean(input):
     DF['Antigen_epitopes'] = DF.Antigen_epitopes.replace(to_replace='Unknown', value='Others')
     
     return DF
+    
+    
 
 def data_split(df,cluster,out_path):
     '''
@@ -77,7 +80,8 @@ def data_split(df,cluster,out_path):
     :param out_path:
     :return:
     '''
-    print("start data splitting \n")
+    print("\n start data splitting \n")
+    df = df.sample(frac=1).reset_index(drop=True)
     splitter = GroupShuffleSplit(test_size=.10, n_splits=2, random_state=42)
     split = splitter.split(df, groups=df[cluster])
     train_inds, test_inds = next(split)

@@ -80,14 +80,17 @@ def data_split(df,clusters,out_path):
 if __name__ == "__main__":
     # Set up argparse
     parser = argparse.ArgumentParser(description='clean dataset and split into train/test set')
-    parser.add_argument('-i', '--input_file', default='results/OAS_memory_paired_v4.csv', type=str,
+    parser.add_argument('-i', '--input_file', default='mBLM/result/memory_paired_Abs_final.csv', type=str,
                         help='the input csv file')
-    parser.add_argument('-o', '--output_prefix', default='data/dataset/OAS_memory', type=str,
+    parser.add_argument('-o', '--output_prefix', default='data/dataset/memory_paired_Abs', type=str,
                         help='the output xlsx file')
     parser.add_argument('-ci', '--cluster_identities',  default=['0.5','0.6','0.7','0.8','0.9'], nargs='+', help='cluster identity list to add the xlsx table')
     # Parse the arguments
     args = parser.parse_args()
     DF = pd.read_csv(args.input_file, low_memory=False)
+    filtered_df = DF[~DF['sequence_alignment_aa_heavy'].str.contains('\*')]
+    DF = filtered_df[~filtered_df['sequence_alignment_aa_heavy'].str.contains('\*')]
+    DF = DF.fillna(' ')
     # output the df
     data_split(DF,args.cluster_identities,args.output_prefix)
 
