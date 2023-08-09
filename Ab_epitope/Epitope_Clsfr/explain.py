@@ -9,6 +9,7 @@ from utils import get_dataset,get_dataset_from_df, saliency_map,gradcam
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, multilabel_confusion_matrix
+from tqdm import tqdm
 # Usage
 '''
 python explain.py
@@ -27,13 +28,13 @@ if __name__ == '__main__':
     parser.add_argument("-lr", "--learning_rate", default=2e-5, type=float)
     parser.add_argument("-c", "--classes", default=7, type=int)
     parser.add_argument("-lm", "--language_model", default='mBLM', type=str)
-    parser.add_argument("-l", "--layers", default=3, type=int)
+    parser.add_argument("-l", "--layers", default=1, type=int)
     parser.add_argument("-hd", "--hidden_dim", default=768, type=int)
     parser.add_argument("-dp", "--dataset_path", default='result/', type=str)
     parser.add_argument("-dfp", "--dataframe_path", default='result/Flu_unknown.csv', type=str)
     parser.add_argument( "--provide_dataset", action='store_true')
     parser.add_argument("-ckp", "--checkpoint_path", default='checkpoint/', type=str)
-    parser.add_argument("-ckn","--checkpoint_name", default='epoch=19-step=7160.ckpt', type=str)
+    parser.add_argument("-ckn","--checkpoint_name", default='mBLM.ckpt', type=str)
     parser.add_argument("-n", "--name", default='mBLM_attention', type=str)
     parser.add_argument("-o", "--output_path", default='result/explain_mBLM/', type=str)
     args = parser.parse_args()
@@ -43,7 +44,15 @@ if __name__ == '__main__':
         test_loader = get_dataset_from_df(args.dataframe_path, batch_size=args.batch_size)
 
     else:
-        train_loader, val_loader, test_loader = get_dataset(args.dataset_path, batch_size=args.batch_size,LM='mBLM')
+        # dataloader
+        if  args.language_model == 'onehot':
+            train_loader, val_loader, test_loader = get_dataset(args.dataset_path, batch_size=args.batch_size,LM=False)
+        elif  args.language_model == 'mBLM':
+            train_loader, val_loader, test_loader = get_dataset(args.dataset_path, batch_size=args.batch_size,LM='mBLM')
+        elif  args.language_model == 'esm2_t33_650M_UR50D':
+            train_loader, val_loader, test_loader = get_dataset(args.dataset_path, batch_size=args.batch_size,LM='esm2_t33_650M')
+        else:
+            train_loader, val_loader, test_loader = get_dataset(args.dataset_path, batch_size=args.batch_size)
     # Check whether pretrained model exists. If yes, load it and skip training
     pretrained_filename = os.path.join(args.checkpoint_path+args.name+'/', args.checkpoint_name)
     if os.path.isfile(pretrained_filename):
@@ -73,12 +82,12 @@ if __name__ == '__main__':
             else:
                 print('ERROR: the format of dataframe is not defined')
         else:    
-            df = pd.read_csv(f'{args.dataset_path}epitope_train.tsv',sep='\t')
+            df = pd.read_csv(f'{args.dataset_path}epitope_test.tsv',sep='\t')
         
         names = df.loc[:,'Name']
         # loop over the test data and predict the labels
 
-        for idx,batch in enumerate(train_loader):
+        for idx,batch in enumerate(tqdm(test_loader,desc="mBLM GradCAM", leave=False)):
             # if idx == 2:break
             # get the inputs and labels
             inputs, labels = batch
