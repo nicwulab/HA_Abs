@@ -136,4 +136,4 @@ conda env create -f Ab_epitope/environment.yml
       - [./graph/YGD_motif_freq.png](./graph/YGD_motif_freq.png)
 
 ## mBLM for epitope prediction
-See more details on [Ab_epitope](./Ab_epitope)
+See [Ab_epitope](./Ab_epitope)
