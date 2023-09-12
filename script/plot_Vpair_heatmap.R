@@ -14,16 +14,12 @@ library(dplyr)
 library(ggrepel)
 library(gridExtra)
 library(data.table)
-library(GGally)
-library(e1071)
 library(ggforce)
-library(ggbeeswarm)
-library(ggExtra)
 require(cowplot)
 require(ggseqlogo)
 
 plot_point_heatmap <- function (df,path,x_lab,y_lab,title){
-  p  <- ggplot(df, aes(x=LV,y=HV,fill=epitope,size=abs(freq))) +
+  p  <- ggplot(df, aes(x=LV,y=HV,fill=epitope,size=abs(freq*100))) +
           geom_point(alpha = 0.5,color='black',pch=21) +
           theme_classic() + 
           scale_fill_brewer(palette = "Set2") +
@@ -36,8 +32,8 @@ plot_point_heatmap <- function (df,path,x_lab,y_lab,title){
                 legend.background=element_blank(),
                 legend.text=element_text(size=7,face="bold",color='black'),
                 legend.spacing.y = unit(0.02, 'lines'),
-                axis.line = element_line(colour = 'black', size = 0),
-                panel.border = element_rect(colour = "black", fill=NA, size=1),
+                axis.line = element_line(colour = 'black', linewidth = 0),
+                panel.border = element_rect(colour = "black", fill=NA, linewidth=1),
                 axis.text.y=element_text(size=5,face="bold",color='black'),
                 axis.text.x=element_text(angle=90,hjust=1,vjust=0.5,size=5,face="bold",color='black')) +
           ggtitle(title) +
