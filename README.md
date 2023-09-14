@@ -5,7 +5,7 @@
 * [Env setup](#Env-setup)  
 * [Dataset](#dataset) 
 * [CDR H3 analysis](#cdr-h3-analysis)   
-* [mBLM for epitope prediction](#mblm-for-epitope-prediction) 
+* [mBLM for specificity prediction](#mblm-for-specificity-prediction) 
  
 
 ## Env setup
@@ -135,5 +135,5 @@ conda env create -f Ab_epitope/environment.yml
     - Output file:
       - [./graph/YGD_motif_freq.png](./graph/YGD_motif_freq.png)
 
-## mBLM for epitope prediction
+## mBLM for specificity prediction
 See [Ab_epitope](./Ab_epitope)
