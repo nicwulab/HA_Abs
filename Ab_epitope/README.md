@@ -1,4 +1,4 @@
-![header](imgs/header.jpg)
+![header](imgs/header.png)
 # Memory-B-cells Language Model (mBLM) for antibody epitope prediction guidelines
 This README describes the mBLM in the paper: [paper link](https://www.biorxiv.org/content/10.1101/2023.09.11.557288v1)
 
