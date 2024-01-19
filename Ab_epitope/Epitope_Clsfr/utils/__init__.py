@@ -1,7 +1,7 @@
 import torch
 from torch.utils.data import Dataset,DataLoader
 import subprocess
-
+from sklearn.utils.class_weight import compute_class_weight
 from torch.nn import functional as F
 from sklearn.preprocessing import MinMaxScaler,LabelEncoder
 from multiprocessing import Pool
@@ -107,12 +107,20 @@ class EpitopeDataset(Dataset):
     self.embed_path is the path for embedded sequence files(*.pt)
     self.prediction is True only when you are using predict.py
     '''
-    def __init__(self, df,embed_path,prediction=False):
+    def __init__(self, df,embed_path,prediction=False,weight=False):
         super().__init__()
         self.df = df
         self.embed_path = embed_path
         self.prediction = prediction
         self.label_map={"HA:Head":0, "HA:Stem":1,"HIV":2, "S:NTD":3, "S:RBD":4, "S:S2":5, "Others":6}
+        self.labels = np.array(self.df['Antigen_epitopes'].map(self.label_map).tolist())
+        if weight:
+            # Calculate class weights
+            self.class_weights = compute_class_weight('balanced', classes=np.unique(self.labels), y=self.labels)
+            # Convert the class weights to a PyTorch tensor
+            self.class_weights = torch.tensor(self.class_weights, dtype=torch.float32)
+        else:
+            self.class_weights=torch.ones(len(self.label_map), dtype=torch.float32)
         self.load_esm_embedding = partial(load_esm_embedding)
         self.load_mBLM_embedding = partial(load_mBLM_embedding)
     def __len__(self):
@@ -137,8 +145,9 @@ class EpitopeDataset(Dataset):
             y = np.array(0)
         else:
             y = np.array(self.label_map[target_data])
-        return x,y
 
+        return x,y,self.class_weights
+    
 
 def df2fasta(df,output_file,name='Name',seq='VH_AA'):
     # Open the output file for writing
@@ -148,7 +157,7 @@ def df2fasta(df,output_file,name='Name',seq='VH_AA'):
             f.write(f'>{row[name]}\n')
             f.write(f'{row[seq]}\n')
 
-def get_dataset_from_df(df_path, batch_size, ncpu=16):
+def get_dataset_from_df(df_path, batch_size, LM='mBLM',ncpu=16):
     if df_path.split('.')[-1] == 'tsv':
         df = pd.read_csv(df_path,sep='\t')
     elif df_path.split('.')[-1] == 'csv':
@@ -172,8 +181,10 @@ def get_dataset_from_df(df_path, batch_size, ncpu=16):
     if len(os.listdir(embedding_output_path)) < 1:
         print('start embedding seqeuence...')
         subprocess.run(['python', 'extract_mBLM_feature.py',  '--model_location','mBLM','--fasta_file',fas_f,'--output_dir', embedding_output_path])
-    test_loader = DataLoader(EpitopeDataset(df,embedding_output_path,prediction=True), batch_size=batch_size,shuffle=False,
-                                         num_workers=ncpu, pin_memory=True)
+    if LM:
+        test_loader = DataLoader(EpitopeDataset(df,embedding_output_path,prediction=True),batch_size=batch_size,shuffle=False,num_workers=ncpu, pin_memory=True)
+    else:
+        test_loader = DataLoader(EpitopeDataset(df,'none',prediction=True),batch_size=batch_size,shuffle=False,num_workers=ncpu, pin_memory=True)
     return test_loader
 def get_dataset(path, batch_size,LM='esm2_t33_650M', ncpu=16):
     test_df = pd.read_csv(f'{path}epitope_test.tsv', sep='\t')
