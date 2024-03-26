@@ -3,7 +3,8 @@ import pytorch_lightning as pl
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping
 from pytorch_lightning.callbacks.model_checkpoint import ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
-
+from sklearn.utils.class_weight import compute_class_weight
+import numpy as np
 import os
 import argparse
 from utils import get_dataset
@@ -20,7 +21,7 @@ def train_Epitope_Clsfr(model_name,batch_size,classes,lm_model_name,lr,dataset_p
     if  lm_model_name == 'onehot':
         train_loader, val_loader, test_loader = get_dataset(dataset_path, batch_size=batch_size,LM=False)
     elif  lm_model_name == 'mBLM':
-        train_loader, val_loader, test_loader = get_dataset(dataset_path, batch_size=batch_size,LM='mBLM')
+        train_loader, test_loader, val_loader = get_dataset(dataset_path, batch_size=batch_size,LM='mBLM')
     elif  lm_model_name == 'esm2_t33_650M_UR50D':
         train_loader, val_loader, test_loader = get_dataset(dataset_path, batch_size=batch_size,LM='esm2_t33_650M')
     else:
@@ -29,9 +30,11 @@ def train_Epitope_Clsfr(model_name,batch_size,classes,lm_model_name,lr,dataset_p
     # Create a PyTorch Lightning trainer with the generation callback
     root_dir = os.path.join(CHECKPOINT_PATH, model_name)
     os.makedirs(root_dir, exist_ok=True)
+    
+
     trainer = pl.Trainer(default_root_dir=root_dir,
                          logger=logger,
-                         max_epochs=15,
+                         max_epochs=25,
                          strategy='ddp_find_unused_parameters_false',
                          callbacks=[ModelCheckpoint(dirpath=root_dir, filename='{epoch}_'+ckn, every_n_epochs = 1, save_top_k = -1, save_weights_only=True),
                                     EarlyStopping(monitor="val_loss", mode="min", patience=5)])
@@ -43,7 +46,7 @@ def train_Epitope_Clsfr(model_name,batch_size,classes,lm_model_name,lr,dataset_p
     model = Epitope_Clsfr.load_from_checkpoint(trainer.checkpoint_callback.best_model_path,classes=classes,class_weights=class_weights,lm_model_name = lm_model_name,hidden_dim=hidden_dim,layers=layers)
     # Test best model on validation and test set
     # val_result = trainer.test(model, val_loader, verbose=False)
-    # test_result = trainer.test(model, test_loader, verbose=False)
+    test_result = trainer.test(model, test_loader, verbose=False)
     # result = {"test": test_result[0]['test_F1'], "val": val_result[0]['test_F1']}
     result = ''
     return model, result

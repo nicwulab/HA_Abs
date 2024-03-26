@@ -76,10 +76,13 @@ class Epitope_Clsfr(pl.LightningModule):
         return optimizer #[optimizer], [scheduler]
 
     def training_step(self, batch, batch_idx):
-        x,y = batch
-
+        x,y,class_weights = batch
         x_out = self.forward(x)
-        loss = F.cross_entropy(x_out, y)
+        #modify it with class weights
+        if class_weights is not None:
+            loss = F.cross_entropy(x_out, y, weight=class_weights[0])
+        else:
+            loss = F.cross_entropy(x_out, y)
         self.accuracy(x_out, y)
         self.F1Score(x_out, y)
         self.log('train_loss', loss, batch_size=y.shape[0])
@@ -90,18 +93,26 @@ class Epitope_Clsfr(pl.LightningModule):
 
     def validation_step(self, batch, batch_index):
 
-        x,y = batch
+        x,y,class_weights = batch
         x_out = self.forward(x)
-        loss = F.cross_entropy(x_out, y)
+        #modify it with class weights
+        if class_weights is not None:
+            loss = F.cross_entropy(x_out, y, weight=class_weights[0])
+        else:
+            loss = F.cross_entropy(x_out, y)
         self.accuracy(x_out, y)
         self.F1Score(x_out, y)
         self.log('val_loss', loss, batch_size=y.shape[0])
         self.log('val_accuracy', self.accuracy, batch_size=y.shape[0])
         self.log('val_F1', self.F1Score, batch_size=y.shape[0])
     def test_step(self, batch, batch_index):
-        x,y = batch
+        x,y,class_weights = batch
         x_out = self.forward(x)
-        loss = F.cross_entropy(x_out, y)
+        #modify it with class weights
+        if class_weights is not None:
+            loss = F.cross_entropy(x_out, y, weight=class_weights[0])
+        else:
+            loss = F.cross_entropy(x_out, y)
         self.accuracy(x_out, y)
         self.F1Score(x_out, y)
         self.log('test_loss', loss,batch_size=y.shape[0])

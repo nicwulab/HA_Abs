@@ -9,6 +9,7 @@ from utils import get_dataset
 import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix, multilabel_confusion_matrix
+from sklearn.utils.class_weight import compute_class_weight
 from tqdm import tqdm
 
 # Usage
@@ -64,7 +65,7 @@ if __name__ == '__main__':
         with torch.no_grad():
             for batch in tqdm(test_loader,desc="mBLM on test set", leave=False):
                 # get the inputs and labels
-                inputs, labels = batch
+                inputs, labels,_ = batch
                 outputs = model(inputs)
                 # get model prediction probabilities
                 probs = torch.softmax(outputs,dim=1)
@@ -90,14 +91,9 @@ if __name__ == '__main__':
         # plot the confusion matrix
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
         # classes = [str(i) for i in range(cm.shape[0])]
-        plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
-
+        # plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+        sns.heatmap(cm, annot=True, cmap='Blues', xticklabels=classes, yticklabels=classes, fmt='.2f')
         plt.title("Normalized confusion matrix")
-        plt.colorbar()
-        tick_marks = np.arange(len(classes))
-        plt.xticks(tick_marks, classes, rotation=45)
-        plt.yticks(tick_marks, classes)
-        plt.tight_layout()
         plt.ylabel('True label')
         plt.xlabel('Predicted label')
         plt.savefig(f'{args.output_path}{args.name}_confusion_matrix.png', dpi=300)

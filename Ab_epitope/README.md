@@ -1,5 +1,6 @@
+![header](imgs/header.png)
 # Memory-B-cells Language Model (mBLM) for antibody epitope prediction guidelines
-This README describes the mBLM in the paper: [paper link]()
+This README describes the mBLM in the paper: [paper link](https://www.biorxiv.org/content/10.1101/2023.09.11.557288v1)
 
 
 ## Contents
@@ -23,8 +24,10 @@ conda env create -f environment.yml
 ### Dataset
 
 - OSA human paired memory B cell: [https://opig.stats.ox.ac.uk/webapps/oas/oas_paired/](https://opig.stats.ox.ac.uk/webapps/oas/oas_paired/)
-- Flu Antibody dataset in this paper: [Flu](raw_data/)
-- SARS-CoV-2 Antibody dataset in this paper: [SARS-CoV-2](raw_data/)
+- paired antibodies from Genbank: [Genbank](data/raw_data/all_paired_antibodies_from_GB_v6.xlsx)
+- Flu Antibody dataset in this paper: [Flu](data/raw_data/HA_Abs_v17.xlsx)
+- SARS-CoV-2 and HIV Antibody dataset in this paper: [SARS-CoV-2](data/raw_data/S-HA-HIV_Abs_v7.xlsx)
+- Final dataset used for epitope prediction: [epi_data](result/epitope_for_training_v1.xlsx)
 
 ### dataset for memory-B-cells Language Model
 We downloaded and processed all OAS memory paired B cell seuqences from OAS.
@@ -46,7 +49,7 @@ Then, we split into train/test/val by sequence identity at maximum 80% (>= 26 AA
 ## Train memory B cell Language Model
 
 mBLM was adapted from RoBERTa model [RoBERTa: A Robustly Optimized BERT Pretraining Approach](https://arxiv.org/abs/1907.11692).
-model and training details see paper[paper link]().
+model and training details see paper[paper link](https://www.biorxiv.org/content/10.1101/2023.09.11.557288v1).
 
 ```commandline
 python train_LM.py
