@@ -35,7 +35,7 @@ def write_motif_freq_file(motif_freq_dict, outfile):
 
 def main():
   outfile  = 'result/YGD_motif_freq.tsv'
-  filename = 'doc/HA_Abs_v17.xlsx'
+  filename = 'doc/HA_Abs_v18.xlsx'
   file_GB  = 'doc/all_paired_antibodies_from_GB_v6.xlsx'
   Ab_dict  = read_ab_info(filename)
   GB_dict  = read_ab_info(file_GB)

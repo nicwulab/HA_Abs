@@ -68,11 +68,15 @@ def IG_list_to_freq(gene_dict):
 def IG_gene_analysis(Ab_dict, clono_dict):
   IGHV_gene_dict = {'HA:Stem':[], 'HA:Head':[]}
   IGHD_gene_dict = {'HA:Stem':[], 'HA:Head':[]}
+  IGHJ_gene_dict = {'HA:Stem':[], 'HA:Head':[]}
   IGLV_gene_dict = {'HA:Stem':[], 'HA:Head':[]}
+  IGLJ_gene_dict = {'HA:Stem':[], 'HA:Head':[]}
   IGV_pair_dict  = {'HA:Stem':[], 'HA:Head':[]}
   IGHV_clonotype     = defaultdict(list)
   IGHD_clonotype     = defaultdict(list)
+  IGHJ_clonotype     = defaultdict(list)
   IGLV_clonotype     = defaultdict(list)
+  IGLJ_clonotype     = defaultdict(list)
   IGV_pair_clonotype = defaultdict(list)
   epi_clonotype      = defaultdict(list)
   clono_IDs      = []
@@ -80,6 +84,8 @@ def IG_gene_analysis(Ab_dict, clono_dict):
     HV = Ab_dict[Ab]['Heavy_V_gene'].rsplit('*')[0]
     LV = Ab_dict[Ab]['Light_V_gene'].rsplit('*')[0]
     HDs = [HD.rsplit('*')[0] for HD in Ab_dict[Ab]['Heavy_D_gene'].rsplit(',')]
+    HJs = [HJ.rsplit('*')[0] for HJ in Ab_dict[Ab]['Heavy_J_gene'].rsplit(',')]
+    LJs = [LJ.rsplit('*')[0] for LJ in Ab_dict[Ab]['Light_J_gene'].rsplit(',')]
     donor = Ab_dict[Ab]['Donor ID']  
     epi   = Ab_dict[Ab]['Binds to']
     epi   = 'HA:Stem' if epi in ['HA:Stem, CR9114-competing', 'HA:Stem, non-CR9114-competing'] else epi
@@ -92,6 +98,10 @@ def IG_gene_analysis(Ab_dict, clono_dict):
         IGLV_gene_dict[epi].append(LV)
         if len(set(HDs)) == 1:
           IGHD_gene_dict[epi].append(HDs[0])
+        if len(set(HJs)) == 1:
+          IGHJ_gene_dict[epi].append(HJs[0])
+        if len(set(LJs)) == 1:
+          IGLJ_gene_dict[epi].append(LJs[0])
         if HV != 'nan' and LV != 'nan':
           IGV_pair_dict[epi].append(HV+'__'+LV)
     else:
@@ -101,6 +111,10 @@ def IG_gene_analysis(Ab_dict, clono_dict):
       epi_clonotype[clono_ID].append(epi)
       if len(set(HDs)) == 1:
         IGHD_clonotype[clono_ID].append(HDs[0])
+      if len(set(HJs)) == 1:
+        IGHJ_clonotype[clono_ID].append(HJs[0])
+      if len(set(LJs)) == 1:
+        IGLJ_clonotype[clono_ID].append(LJs[0])
   for clono_ID in sorted(IGHV_clonotype.keys(), key=lambda x:float(x.rsplit('|')[0])):
     epi = classify_epitope(epi_clonotype[clono_ID.rsplit('|')[0]])
     if epi in ['HA:Stem', 'HA:Head']:
@@ -113,12 +127,20 @@ def IG_gene_analysis(Ab_dict, clono_dict):
       if len(IGHD_clonotype[clono_ID]) != 0:
         IGHD = identifying_max_gene(IGHD_clonotype[clono_ID])
         IGHD_gene_dict[epi].append(IGHD)
-  return sorted(list(set(clono_IDs))), IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGV_pair_dict
+      if len(IGHJ_clonotype[clono_ID]) != 0:
+        IGHJ = identifying_max_gene(IGHJ_clonotype[clono_ID])
+        IGHJ_gene_dict[epi].append(IGHJ)
+      if len(IGLJ_clonotype[clono_ID]) != 0:
+        IGLJ = identifying_max_gene(IGLJ_clonotype[clono_ID])
+        IGLJ_gene_dict[epi].append(IGLJ)
+  return sorted(list(set(clono_IDs))), IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGHJ_gene_dict, IGLJ_gene_dict, IGV_pair_dict
  
-def VDJ_baseline(GB_dict, IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGV_pair_dict):
+def VDJ_baseline(GB_dict, IGHV_gene_dict, IGHD_gene_dict, IGHJ_gene_dict, IGLV_gene_dict, IGLJ_gene_dict, IGV_pair_dict):
   IGHV_gene_dict['GenBank'] = []
   IGHD_gene_dict['GenBank'] = []
+  IGHJ_gene_dict['GenBank'] = []
   IGLV_gene_dict['GenBank'] = []
+  IGLJ_gene_dict['GenBank'] = []
   IGV_pair_dict['GenBank']  = []
   for Ab in GB_dict.keys():
     HV = GB_dict[Ab]['Heavy_V_gene'].rsplit('*')[0]
@@ -127,9 +149,15 @@ def VDJ_baseline(GB_dict, IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGV_pa
     IGLV_gene_dict['GenBank'].append(LV)
     IGV_pair_dict['GenBank'].append(HV+'__'+LV)
     HDs = [HD.rsplit('*')[0] for HD in GB_dict[Ab]['Heavy_D_gene'].rsplit(',')]
+    HJs = [HJ.rsplit('*')[0] for HJ in GB_dict[Ab]['Heavy_J_gene'].rsplit(',')]
+    LJs = [LJ.rsplit('*')[0] for LJ in GB_dict[Ab]['Light_J_gene'].rsplit(',')]
     if len(set(HDs)) == 1:
       IGHD_gene_dict['GenBank'].append(HDs[0])
-  return IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict , IGV_pair_dict
+    if len(set(HJs)) == 1:
+      IGHJ_gene_dict['GenBank'].append(HJs[0])
+    if len(set(LJs)) == 1:
+      IGLJ_gene_dict['GenBank'].append(LJs[0])
+  return IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict , IGHJ_gene_dict, IGLJ_gene_dict, IGV_pair_dict
 
 def write_IG_freq(gene_dict, GB_dict, outfile):
   print ('writing: %s' % outfile)
@@ -159,20 +187,27 @@ def main():
   out_IGHV_file  = 'result/IGHV_freq.tsv'
   out_IGHD_file  = 'result/IGHD_freq.tsv'
   out_IGLV_file  = 'result/IGLV_freq.tsv'
+  out_IGHJ_file  = 'result/IGHJ_freq.tsv'
+  out_IGLJ_file  = 'result/IGLJ_freq.tsv'
   out_Vpair_file = 'result/IGV_pair_freq.tsv'
   out_pub_clono  = 'result/HA_Abs_clonotype_public.xlsx'
-  file_ab        = 'doc/HA_Abs_v17.xlsx'
+  file_ab        = 'doc/HA_Abs_v18.xlsx'
   file_clonotype = 'result/HA_Abs_clonotype.xlsx'
   file_GB        = 'doc/all_paired_antibodies_from_GB_v6.xlsx'
   Ab_dict        = read_ab_info(file_ab)
   GB_dict        = read_ab_info(file_GB)
   clono_dict     = read_clonoinfo(file_clonotype)
-  clono_IDs, IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGV_pair_dict = IG_gene_analysis(Ab_dict, clono_dict)
-  IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGV_pair_dict = VDJ_baseline(GB_dict, IGHV_gene_dict, IGHD_gene_dict, \
-                                                                               IGLV_gene_dict, IGV_pair_dict)
+  clono_IDs, IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGHJ_gene_dict, IGLJ_gene_dict, IGV_pair_dict = IG_gene_analysis(Ab_dict, \
+                                                                                                                              clono_dict)
+  IGHV_gene_dict, IGHD_gene_dict, IGLV_gene_dict, IGHJ_gene_dict, IGLJ_gene_dict, IGV_pair_dict = VDJ_baseline(GB_dict, IGHV_gene_dict, \
+                                                                                               IGHD_gene_dict, IGHJ_gene_dict, \
+                                                                                               IGLV_gene_dict, IGLJ_gene_dict, \
+                                                                                               IGV_pair_dict)
   write_IG_freq(IGHV_gene_dict, GB_dict, out_IGHV_file)
   write_IG_freq(IGHD_gene_dict, GB_dict, out_IGHD_file)
   write_IG_freq(IGLV_gene_dict, GB_dict, out_IGLV_file)
+  write_IG_freq(IGHJ_gene_dict, GB_dict, out_IGHJ_file)
+  write_IG_freq(IGLJ_gene_dict, GB_dict, out_IGLJ_file)
   write_IG_freq(IGV_pair_dict, GB_dict, out_Vpair_file)
   identifying_public_clono(file_clonotype, out_pub_clono, clono_IDs)
 

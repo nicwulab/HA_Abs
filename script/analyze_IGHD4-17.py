@@ -41,7 +41,7 @@ def extract_ab(Ab_dict, outfile):
   outfile.close()
 
 def main():
-  filename = 'doc/HA_Abs_v17.xlsx'
+  filename = 'doc/HA_Abs_v18.xlsx'
   outfile  = 'result/Abs_IGHD4-17.tsv'
   Ab_dict  = read_ab_info(filename)
   extract_ab(Ab_dict, outfile)

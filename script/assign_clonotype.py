@@ -63,13 +63,25 @@ def write_clonotype(clonotype_assign, filename, outfile_clonotype):
   print ('writing: %s' % outfile_clonotype)
   df.to_excel(outfile_clonotype, index=False)
 
+def analyze_clonotype(Ab_dict, clonotype_assign):
+  clonotype_IDs = sorted(list(set(clonotype_assign.values())))
+  for clonotype_ID in clonotype_IDs:
+    epi_list = []
+    for Ab in clonotype_assign.keys():
+      if clonotype_assign[Ab] == clonotype_ID:
+         epi = Ab_dict[Ab]['Binds to']
+         if epi != 'HA:Unk':
+           epi_list.append(epi)
+    print (clonotype_ID, list(set(epi_list)))
+
 def main():
-  filename           = 'doc/HA_Abs_v17.xlsx'
+  filename           = 'doc/HA_Abs_v18.xlsx'
   CDRH3_cluster      = 'result/CDRH3_cluster.tsv'
   outfile_clonotype  = 'result/HA_Abs_clonotype.xlsx'
   CDRH3_cluster_dict = read_cluster_info(CDRH3_cluster)
   Ab_dict            = read_ab_info(filename)
   clonotype_assign   = clonotype_assignment(Ab_dict, CDRH3_cluster_dict)
+  analyze_clonotype(Ab_dict, clonotype_assign)
   write_clonotype(clonotype_assign, filename, outfile_clonotype)
 
 if __name__ == "__main__":

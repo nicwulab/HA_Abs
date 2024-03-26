@@ -32,7 +32,7 @@ plot_IG_usage <- function(data,w,h,graphname){
                 axis.title.y=element_text(size=textsize,face="bold"),
                 axis.line = element_line(colour = 'black', size = 0),
                 panel.border = element_rect(colour = "black", fill=NA, size=1),
-                legend.position = "right",
+                legend.position = "top",
                 legend.title    = element_blank(),
                 legend.text=element_text(size=textsize,face="bold"),
                 legend.justification='center',
@@ -59,4 +59,10 @@ IGLV_data <- mutate(IGLV_data, gene=factor(gene,levels=IGLV_level))
 plot_IG_usage(IGLV_data, 6.5, 1.3, 'graph/IGLV_usage.png')
 
 IGHD_data <- read_tsv('result/IGHD_freq.tsv')
-plot_IG_usage(IGHD_data, 4.2, 1.4, 'graph/IGHD_usage.png')
+plot_IG_usage(IGHD_data, 4.2, 1.3, 'graph/IGHD_usage.png')
+
+IGHJ_data <- read_tsv('result/IGHJ_freq.tsv')
+plot_IG_usage(IGHJ_data, 2, 1.16, 'graph/IGHJ_usage.png')
+
+IGHJ_data <- read_tsv('result/IGLJ_freq.tsv')
+plot_IG_usage(IGHJ_data, 2.7, 1.16, 'graph/IGLJ_usage.png')

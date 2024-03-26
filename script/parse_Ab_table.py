@@ -49,7 +49,7 @@ def extract_basic_info(filename, outfile_CDRH3, outfile_ref):
   print ('  ',Counter(epi))
 
 def main():
-  filename = 'doc/HA_Abs_v17.xlsx'
+  filename = 'doc/HA_Abs_v18.xlsx'
   outfile_CDRH3  = 'result/CDRH3.tsv'
   outfile_ref    = 'result/refs.txt'
   extract_basic_info(filename, outfile_CDRH3, outfile_ref)
