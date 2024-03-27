@@ -97,7 +97,7 @@ conda env create -f Ab_epitope/environment.yml
       - [./result/IGV_pair_freq.tsv](./result/IGV_pair_freq.tsv)
       - [./result/HA_Abs_clonotype_public.xlsx](./result/HA_Abs_clonotype_public.xlsx)
       
-3. Extract IGHD4-17-encoded head antibodies 
+3. Extract IGHD4-17-encoded head antibodies   
 ``python3 script/analyze_IGHD4-17.py``   
     - Input file:
       - [./doc/HA_Abs_v18.xlsx](./doc/HA_Abs_v18.xlsx)
