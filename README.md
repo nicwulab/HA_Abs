@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/582888637.svg)](https://zenodo.org/doi/10.5281/zenodo.11359137)
+
 # Sequence analysis of influenza hemagglutinin (HA) antibodies
 This README describes the analysis in:   
 [An explainable language model for antibody specificity prediction using curated influenza hemagglutinin antibodies](https://www.biorxiv.org/content/10.1101/2023.09.11.557288v1)
