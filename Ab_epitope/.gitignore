@@ -1,0 +1,9 @@
+OAS_download
+
+data/epitope_all.fasta
+
+result/
+
+data/dataset
+
+data/raw_data/OAS_memory_paired.csv
